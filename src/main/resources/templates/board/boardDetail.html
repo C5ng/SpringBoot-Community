@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Creative - Start Bootstrap Theme</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon"
+          th:href="@{assets/favicon.ico}"
+          href="assets/favicon.ico"/>
+    <!-- Bootstrap Icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic"
+          rel="stylesheet" type="text/css"/>
+    <!-- SimpleLightbox plugin CSS-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link th:href="@{/css/bootstrapStyle.css}"
+          href="css/bootstrapStyle.css" rel="stylesheet"/>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+</head>
+<body id="">
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="/">Shuttle</a>
+
+
+
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="" th:href="@{/board/list}">게시판</a></li>
+                <li class="nav-item"><a class="nav-link" href="" th:href="@{/board/add( bno = ${board.bno} )}">수정하기</a></li>
+                <li class="nav-item"><a class="nav-link" href="" th:href="@{/board/delete( bno = ${board.bno} )}">삭제하기</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center" style="width: 100%;">
+            <div class="card-content" style="width: 100%;">
+                <form class="form-horizontal form-view" th:object="${board}">
+
+                    <div th:if="${not #lists.isEmpty( fileList )}" class="form-group" style="margin-left: 20%; border: 0px;">
+                        <div class="col-sm-10">
+                            <div class="form-control file_list" style="border: 0px;">
+                                <a th:each="row, status : ${fileList}" style="border: 0px;">
+                                    <i class="fa fa-file-o" style="border: 0px;" aria-hidden="true"></i>
+                                    <img style="border: 0px; width: 750px; height: 350px" th:src="|/image/${row.save_name}|"/>
+                                </a>
+                                <span class="form-control" style="border: 0px; margin-top: 5px; font-size: 17.5px;" th:text="*{writer}"></span>
+                                <span class="form-control" style="border: 0px; font-size: 17.5px;" th:text="*{address}"></span>
+                                <hr class="my-4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 20%">
+                        <div class="col-sm-10">
+                            <span class="form-control" th:text="*{title}" style="border: 0px; font-weight: bold; font-size: 25px;"></span>
+                            <span class="form-control" style="border: 0px;" th:text="*{#temporals.format( insert_Time, 'yyyy-MM-dd' )}"></span>
+                            <span class="form-control" style="border: 0px; font-weight: 700;" th:text="|${#numbers.formatInteger(board.price, 0, 'COMMA')}원|"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="margin-left: 20%">
+                        <label for="inp-type-5" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <p class="form-control" style="border: 0px;" th:text="*{content}"></p>
+                            <p class="form-control" style="border: 0px; font-size: 15px; color: #C0C0C0;" th:text="|조회수: *{view_cnt}|"></p>
+                        </div>
+                    </div>
+
+                </form>
+                <button th:if="${session.loginMember != null}" class="btn btn-secondary" id="enterChat" type="submit" style="margin-left: 75%;">채팅방 입장</button>
+<!--=======-->
+<!--                <form th:action="@{/chat/room}" name = "dno" class="form-group" style="margin-top : 2rem;" th:if="${session.loginMember != null}" method="post">-->
+<!--&lt;!&ndash;                    <form th:action="@{/chat/room}" class="form-group" style="margin-top : 2rem;" th:if="${session.loginMember != null}" method="post">&ndash;&gt;-->
+<!--                    <button name = "dno" class="btn btn-secondary"  type="submit">채팅방 입장</button>-->
+<!--&lt;!&ndash;                    onclick="location.href='/chat/room'"&ndash;&gt;-->
+<!--                </form>-->
+<!--&gt;>>>>>> Stashed changes-->
+
+            </div>
+            <!-- /.card-content -->
+        </div>
+    </div>
+</section>
+<script th:inline="javascript">
+    $("#enterChat").click(function(){
+        let bno=/*[[${board.bno}]]*/;
+        console.log(bno);
+        const loginId = /*[[${session.loginMember.loginId}]]*/;
+        const writerId = /*[[${board.loginId}]]*/;
+   
+        if(loginId === writerId){
+            alert("본인의 게시글입니다");
+            location.href="/";
+        }else{
+            $.ajax({
+                type:"GET",
+                url:`/chat/room/`+bno,
+                data:JSON.stringify(bno),
+                contentType:"application/json;charset=utf-8",
+                success:function(data){
+                    console.log("채팅방 입장");
+                    location.href="/chat/chatroom";
+                },
+                error:function(error){
+                    console.log(error)
+                }
+            });
+        }
+    });
+<!--            dataType:"json",-->
+<!--    $("#btn btn-secondary").click(funciton(){-->
+<!--        const dno = $("board.bno").val();-->
+<!--    }-->
+<!--    let request = $.ajax({-->
+<!--        url : "/chat/room",-->
+<!--        method : "POST",-->
+<!--        data : { id : "board.dno" },-->
+<!--        data-->
+<!--    })-->
+
+</script>
+
+<!-- Footer-->
+<footer class="bg-light py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="small text-center text-muted">Copyright &copy; 2021 - Company Name</div>
+    </div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SimpleLightbox plugin JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+<!-- Core theme JS-->
+<script th:src="@{/js/navScripts.js}"
+        src="js/navScripts.js"></script>
+
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<!-- * *                               SB Forms JS                               * *-->
+<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+
+</body>
+</html>

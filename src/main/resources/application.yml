@@ -1,0 +1,32 @@
+server :
+  port : 0830
+
+mybatis:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: springboot.shuttle.*
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: 12345678
+    url: jdbc:mysql://shuttle.cfptkyo6yq2m.us-east-2.rds.amazonaws.com/Shuttle?useSSL=false&allowPublicKeyRetrieval=true
+    username: user
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: username //보내는 사람 ID
+    password: password //비밀번호
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000

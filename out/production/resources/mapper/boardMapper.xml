@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="springboot.shuttle.mapper.BoardMapper"> <!-- namespace는 xml mapper의 sql쿼리문과 mapper 인터페이스의 메서드를 매핑시키는 역-->
+
+    <sql id="boardColumns">
+        bno
+        , title
+        , content
+        , writer
+        , view_cnt
+        , notice_yn
+        , secret_yn
+        , delete_yn
+        , insert_time
+        , update_time
+        , delete_time
+        , address
+        , price
+        , save_name
+        , loginId
+    </sql>
+
+
+    <insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="bno">
+        INSERT INTO board (
+                <include refid="boardColumns" />
+        ) VALUES (
+              #{bno}
+            , #{title}
+            , #{content}
+            , #{writer}
+            , 0
+            , 'N'
+            , 'N'
+            , 'N'
+            , NOW()
+            , NULL
+            , NULL
+            , #{address}
+            , #{price}
+            , ""
+            , #{loginId}
+        )
+    </insert>
+
+    <select id="detailBoard" parameterType="long" resultType="Board">
+        SELECT
+                <include refid="boardColumns" />
+        FROM
+                board
+        WHERE
+                delete_yn = 'N'
+        AND
+                bno = #{bno}
+    </select>
+
+    <update id="updateBoard" parameterType="Board">
+        UPDATE
+                board
+        SET
+                update_time = NOW(),
+                title = #{title},
+                content = #{content},
+                writer = #{writer},
+                price = #{price}
+        WHERE
+                bno = #{bno}
+    </update>
+
+    <update id="insertImage" parameterType="Board">
+        UPDATE board
+        SET
+            save_name = #{save_name}
+        WHERE
+            bno = #{bno}
+    </update>
+
+    <update id="deleteBoard" parameterType="long">
+        UPDATE board
+        SET
+                delete_yn = 'Y',
+                delete_time = NOW()
+        WHERE
+                bno = #{bno}
+    </update>
+
+    <select id="listBoard" parameterType="Board" resultType="Board">
+        SELECT
+                <include refid="boardColumns" />
+        FROM
+                board
+        WHERE
+                delete_yn = 'N'
+        <include refid="CommonMapper.search" />
+        ORDER BY
+                notice_yn ASC,
+                bno DESC,
+                insert_time DESC
+        <include refid="CommonMapper.paging" />
+    </select> <!-- mybatis에서 #{파라미터}는 여러 멤버를 가진 객체의 경우 Getter에 해당.
+    startPage는 Criteria 클래스의 getStartPage를 리턴, recordsPerPage는 페이지 당 출력할 데이터의 개수를 의미 -->
+
+    <select id="countBoard" parameterType="Board" resultType="int">
+        SELECT
+                COUNT(*)
+        FROM
+                board
+        WHERE
+                delete_yn = 'N'
+        <include refid="CommonMapper.search" />
+    </select>
+
+    <select id="getAddress" resultType="String">
+        SELECT address FROM board
+    </select>
+
+    <update id="cntPlus" parameterType="Long">
+        UPDATE board SET view_cnt = view_cnt + 1 WHERE bno = #{bno}
+    </update>
+
+    <select id="findByBoardName" parameterType="Long" resultType="String">
+        select title from board where bno=#{bno}
+    </select>
+
+    <select id="findByWriter" parameterType="Long" resultType="String">
+        select loginId from board where bno=#{bno}
+<!--        select writer from board where bno=#{bno}-->
+    </select>
+
+</mapper>
